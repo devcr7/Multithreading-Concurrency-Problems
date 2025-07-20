@@ -5,18 +5,22 @@ import java.util.function.IntConsumer;
 
 public class ZeroEvenOddSemaphore {
     private final int n;
-    private final Semaphore zeroSemaphore = new Semaphore(1);
-    private final Semaphore oddSemaphore = new Semaphore(0);
-    private final Semaphore evenSemaphore = new Semaphore(0);
-    private int current = 1;
+    private final Semaphore zeroSemaphore;
+    private final Semaphore oddSemaphore;
+    private final Semaphore evenSemaphore;
+    private int current;
 
     public ZeroEvenOddSemaphore(int n) {
         this.n = n;
+        this.zeroSemaphore = new Semaphore(1);
+        this.oddSemaphore = new Semaphore(0);
+        this.evenSemaphore = new Semaphore(0);
+        this.current = 1;
     }
 
     public void zero(IntConsumer printNumber) throws InterruptedException {
         while (true) {
-            zeroSemaphore.acquire();
+            zeroSemaphore.acquire(); // this line replaces synchronized(this)
             if (current > n) {
                 oddSemaphore.release();
                 evenSemaphore.release();
