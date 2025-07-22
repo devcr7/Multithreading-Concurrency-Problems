@@ -21,7 +21,7 @@ public class BoundedBlockingQueue {
 
     public void enqueue(int item) throws InterruptedException {
         slots.acquire(); // Wait for a slot to be available
-        mutex.acquire(); // Lock the queue for exclusive access
+        mutex.acquire(); // Lock the queue for exclusive access, this is blocking atomic operation.
         try {
             queue.offer(item);
         } finally {

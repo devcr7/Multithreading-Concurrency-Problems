@@ -3,6 +3,7 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
+        /// Java’s Semaphore uses atomic variables and AbstractQueuedSynchronizer (AQS) to manage permits safely across threads.
         BoundedBlockingQueue bbq = new BoundedBlockingQueue(5); // queue with capacity 5
 
         // Producer thread
