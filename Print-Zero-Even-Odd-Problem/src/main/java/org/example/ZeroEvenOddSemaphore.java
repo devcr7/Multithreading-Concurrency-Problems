@@ -38,10 +38,7 @@ public class ZeroEvenOddSemaphore {
     public void even(IntConsumer printNumber) throws InterruptedException {
         while (true) {
             evenSemaphore.acquire();
-            if (current > n) {
-                zeroSemaphore.release();
-                return;
-            }
+            if (current > n) return;
             printNumber.accept(current++);
             zeroSemaphore.release();
         }
@@ -50,10 +47,7 @@ public class ZeroEvenOddSemaphore {
     public void odd(IntConsumer printNumber) throws InterruptedException {
         while (true) {
             oddSemaphore.acquire();
-            if (current > n) {
-                zeroSemaphore.release();
-                return;
-            }
+            if (current > n) return;
             printNumber.accept(current++);
             zeroSemaphore.release();
         }
