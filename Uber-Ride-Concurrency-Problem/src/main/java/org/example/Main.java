@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -17,26 +19,51 @@ public class Main {
 
         Runnable board = () -> System.out.println(Thread.currentThread().getName() + " is boarding the ride.");
 
+        List<Thread> allThreads = new ArrayList<>();
+
         for (int i = 0; i < totalRiders; i++) {
-            new Thread(() -> {
-                try {
-                    ride.boardRider(board);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.out.println("Thread interrupted: " + e.getMessage());
-                }
-            }, "Rider-" + (i + 1)).start();
+            int riderId = i + 1;
+            Thread t = Thread.ofVirtual()
+                    .name("Rider-" + riderId)
+                    .start(() -> {
+                        try {
+                            ride.boardRider(board);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println("Thread interrupted: " + e.getMessage());
+                        }
+                    });
+            allThreads.add(t);
         }
 
         for (int i = 0; i < totalDrivers; i++) {
-            new Thread(() -> {
-                try {
-                    ride.boardDriver(board);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.out.println("Thread interrupted: " + e.getMessage());
-                }
-            }, "Driver-" + (i + 1)).start();
+            int driverId = i + 1;
+            Thread t = Thread.ofVirtual()
+                    .name("Driver-" + driverId)
+                    .start(() -> {
+                        try {
+                            ride.boardDriver(board);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println("Thread interrupted: " + e.getMessage());
+                        }
+                    });
+            allThreads.add(t);
         }
+
+        // ✅ Wait for all virtual threads to finish
+        // since virtual threads are deamon threads, we need to ensure they complete
+        // before the main thread exits.
+        // as jvm doesn't care about daemon threads, we need to wait for them explicitly.
+        for (Thread t : allThreads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Join interrupted: " + e.getMessage());
+            }
+        }
+
+        System.out.println("All threads completed.");
     }
 }
